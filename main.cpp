@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
+#include <unistd.h>
 
 using namespace std;
 
@@ -16,10 +17,13 @@ int count_neighbour(int x, int y);
 int main()
 {
     setup();
+    cout << "\033[2J\033[1;1H";
     while (true)
     {
         display_grid();
         update_grid();
+        cout << "\033[2J\033[1;1H";
+        usleep(0.01 * 100 * 10000);
     }
     return 0;
 }
@@ -40,11 +44,26 @@ void setup()
 
 void display_grid()
 {
-    for (int i = 0; i < GRID_SIZE; i++)
+    for (int i = 0; i < GRID_SIZE; i += 2)
     {
         for (int j = 0; j < GRID_SIZE; j++)
         {
-            cout << grid[i][j] << " ";
+            int top = grid[i][j];
+            int bottom = 0;
+
+            if (i + 1 < GRID_SIZE)
+            {
+                bottom = grid[i + 1][j];
+            }
+
+            if (top == 1 && bottom == 1)
+                cout << "█";
+            else if (top == 1 && bottom == 0)
+                cout << "▀";
+            else if (top == 0 && bottom == 1)
+                cout << "▄";
+            else
+                cout << " ";
         }
         cout << endl;
     }
@@ -70,9 +89,9 @@ void update_grid()
 int count_neighbour(int x, int y)
 {
     int count = 0;
-    for (int i = -1; i < 3; i++)
+    for (int i = -1; i < 2; i++)
     {
-        for (int j = -1; j < 3; j++)
+        for (int j = -1; j < 2; j++)
         {
             count += grid[(i + x + GRID_SIZE) % GRID_SIZE][(j + y + GRID_SIZE) % GRID_SIZE];
         }
