@@ -1,34 +1,13 @@
+#include "gol.h"
 #include <iostream>
 #include <vector>
 #include <ctime>
-#include <unistd.h>
 
 using namespace std;
 
-const int GRID_SIZE = 100;
+Gol::Gol(int gridSize) : GRID_SIZE(gridSize) {}
 
-vector<vector<int>> grid;
-
-void setup();
-void display_grid();
-void update_grid();
-int count_neighbour(int x, int y);
-
-int main()
-{
-    setup();
-    cout << "\033[2J\033[1;1H";
-    while (true)
-    {
-        display_grid();
-        update_grid();
-        cout << "\033[2J\033[1;1H";
-        usleep(0.01 * 100 * 10000);
-    }
-    return 0;
-}
-
-void setup()
+void Gol::setup()
 {
     srand(time(NULL));
     for (int i = 0; i < GRID_SIZE; i++)
@@ -42,7 +21,7 @@ void setup()
     }
 }
 
-void display_grid()
+void Gol::display_grid()
 {
     for (int i = 0; i < GRID_SIZE; i += 2)
     {
@@ -69,7 +48,20 @@ void display_grid()
     }
 }
 
-void update_grid()
+int Gol::count_neighbour(int x, int y)
+{
+    int count = 0;
+    for (int i = -1; i < 2; i++)
+    {
+        for (int j = -1; j < 2; j++)
+        {
+            count += grid[(i + x + GRID_SIZE) % GRID_SIZE][(j + y + GRID_SIZE) % GRID_SIZE];
+        }
+    }
+    return count - grid[x][y];
+}
+
+void Gol::update_grid()
 {
     vector<vector<int>> next_state = grid;
     for (int i = 0; i < GRID_SIZE; i++)
@@ -84,17 +76,4 @@ void update_grid()
         }
     }
     grid = next_state;
-}
-
-int count_neighbour(int x, int y)
-{
-    int count = 0;
-    for (int i = -1; i < 2; i++)
-    {
-        for (int j = -1; j < 2; j++)
-        {
-            count += grid[(i + x + GRID_SIZE) % GRID_SIZE][(j + y + GRID_SIZE) % GRID_SIZE];
-        }
-    }
-    return count - grid[x][y];
 }
