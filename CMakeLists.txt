@@ -4,5 +4,6 @@ project(gol-cpp)
 include_directories(include)
 
 add_executable(gol_cpp
+    src/gol.cpp
     src/main.cpp
 )
